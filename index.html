@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>rovero — Stay connected wherever you travel</title>
+  <meta name="description" content="Affordable eSIM data plans in 190+ destinations. Buy your plan, scan the QR code, and get connected in minutes.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="hero.css">
+</head>
+<body>
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero__inner">
+
+    <div class="hero__content">
+      <h1 id="hero-title" class="hero__title">Stay Connected <span>Wherever You Go</span></h1>
+      <p class="hero__lead">Affordable eSIM data plans in 190+ destinations. Buy your plan, scan the QR code, and get connected in minutes.</p>
+
+      <form class="hero-search" role="search" action="/destinations" method="get" data-hero-search autocomplete="off">
+        <label class="visually-hidden" for="hero-search-input">Search destination</label>
+        <svg class="hero-search__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="hero-search-input" class="hero-search__input" name="q" type="text"
+               placeholder="Where are you travelling to?" role="combobox"
+               aria-expanded="false" aria-controls="hero-search-list" aria-autocomplete="list">
+        <button class="hero-search__btn" type="submit">Find Your eSIM</button>
+        <ul id="hero-search-list" class="hero-search__list" role="listbox" hidden></ul>
+      </form>
+
+      <p class="hero__trust">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.5 6.6 19.5l1.2-6L3.3 9.3l6.1-.7L12 3z"/></svg>
+        Loved by 100K+ travellers worldwide
+      </p>
+    </div>
+
+    <div class="hero__visual" aria-hidden="true">
+      <svg class="globe" viewBox="0 0 520 520" fill="none">
+        <circle class="globe__ring" cx="260" cy="260" r="150"/>
+        <circle class="globe__ring" cx="260" cy="260" r="210"/>
+        <circle class="globe__ring globe__ring--dash" cx="260" cy="260" r="250"/>
+      </svg>
+
+      <figure class="dest-card dest-card--left">
+        <img src="images/thailand.jpg" alt="" loading="lazy" width="600" height="750">
+        <figcaption>Thailand</figcaption>
+      </figure>
+      <figure class="dest-card dest-card--right">
+        <img src="images/france.jpg" alt="" loading="lazy" width="600" height="750">
+        <figcaption>France</figcaption>
+      </figure>
+      <figure class="dest-card dest-card--main">
+        <img src="images/japan.jpg" alt="" width="600" height="750">
+        <figcaption>Japan</figcaption>
+      </figure>
+    </div>
+
+  </div>
+</section>
+
+<script src="hero.js" defer></script>
+</body>
+</html>
+
