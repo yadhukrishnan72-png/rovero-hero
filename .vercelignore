@@ -1,5 +1,16 @@
 Reference Image.png
-Country_Page*.png
-Why coose rovero.png
-Indonesia image.webp
-Indonesia New Image.avif
+country-page/reference/
+research/
+eSIMtech_products_*.pdf
+ICON Reference.png
+desktop.ini
+**/desktop.ini
+tools/
+destination-art/pilot/
+destination-art/*.xlsx
+destination-art/samples/
+destination-art/scenes/
+region-page/region.html
+region-page/region.js
+region-page/images/africa.svg
+rovero-handoff/

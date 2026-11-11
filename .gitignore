@@ -4,3 +4,13 @@ node_modules/
 .DS_Store
 Thumbs.db
 Reference Image.png
+__pycache__/
+desktop.ini
+**/desktop.ini
+eSIMtech_products_*.pdf
+research/
+destination-art/esim-plans-*.xlsx
+country-page/reference/
+country-page/ICON Reference.png
+destination-art/pilot/
+destination-art/samples/

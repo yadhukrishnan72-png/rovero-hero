@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1170 780" role="img" aria-label="Placeholder: an African savanna at sunset with an acacia tree">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F6B25C"/>
+      <stop offset=".55" stop-color="#F28A4B"/>
+      <stop offset="1" stop-color="#B8476B"/>
+    </linearGradient>
+    <radialGradient id="sun" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#FFF3C9"/>
+      <stop offset=".6" stop-color="#FFD27A"/>
+      <stop offset="1" stop-color="#FFD27A" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1170" height="780" fill="url(#sky)"/>
+  <circle cx="760" cy="470" r="230" fill="url(#sun)"/>
+  <circle cx="760" cy="470" r="70" fill="#FFF0C2"/>
+  <path d="M0 560 C180 520 320 540 470 510 C640 478 800 530 1000 505 C1080 495 1130 500 1170 508 V780 H0Z" fill="#7A2E4B" opacity=".55"/>
+  <path d="M0 610 C200 580 380 600 560 580 C760 560 960 600 1170 570 V780 H0Z" fill="#4A1C3A"/>
+  <g fill="#23102A">
+    <path d="M0 660 C260 630 520 665 780 645 C960 632 1080 650 1170 640 V780 H0Z"/>
+    <path d="M300 650 L306 520 C306 500 300 480 282 462 L260 440 L286 452 C300 460 308 470 312 484 C318 462 330 446 352 436 L384 424 L350 450 C326 466 316 486 314 520 L322 650Z"/>
+    <path d="M170 420 C210 392 300 380 360 392 C440 364 560 372 600 408 C650 400 720 416 730 440 C690 452 640 448 600 440 C560 458 480 456 430 440 C380 460 300 458 250 444 C210 450 170 440 170 420Z"/>
+    <path d="M860 668 l4 -58 l-26 -26 l28 14 l2 -38 l8 38 l30 -22 l-28 34 l2 58z" opacity=".9"/>
+  </g>
+</svg>
