@@ -1,6 +1,7 @@
 // Country page plan picker.
 // Plan fields: gb, days, price; voice + sms (Data + Voice plans); perDay (Unlimited: daily high-speed allowance);
-// tag (e.g. 'Most popular'); local: true shows the lightning badge and the "Local plan" box for that tab.
+// tag (e.g. 'Most popular'); local: true shows the lightning badge and the "Local plan" box for that tab;
+// global: true shows the blue globe badge and the "Global plan" box while that plan is selected.
 // Plans, sizes and which ones are local differ per country; the page logic never checks sizes.
 // PLANS is sample data (only 1 GB / 7 days / $3.99 comes from the live page). Replace with your real plans / API.
 const PLANS = {
@@ -8,15 +9,15 @@ const PLANS = {
     { gb: '1 GB',  days: 7,  price: 3.99 },
     { gb: '3 GB',  days: 15, price: 7.99 },
     { gb: '5 GB',  days: 30, price: 11.99, tag: 'Most popular' },
-    { gb: '10 GB', days: 30, price: 19.99 },
-    { gb: '20 GB', days: 30, price: 32.99 },
+    { gb: '10 GB', days: 30, price: 19.99, global: true }, // PLACEHOLDER: which plans are global is sample data
+    { gb: '20 GB', days: 30, price: 32.99, global: true },
   ],
   // PLACEHOLDER voice bundles (minutes, SMS and prices are invented).
   voice: [
-    { gb: '3 GB',  voice: '100 min', sms: '25 SMS',  days: 15, price: 11.99 },
+    { gb: '3 GB',  voice: '100 min', sms: '25 SMS',  days: 15, price: 11.99, global: true },
     { gb: '5 GB',  voice: '200 min', sms: '50 SMS',  days: 30, price: 17.99, tag: 'Most popular', local: true },
     { gb: '10 GB', voice: '300 min', sms: '75 SMS',  days: 30, price: 26.99, local: true },
-    { gb: '20 GB', voice: 'Unlimited min', sms: '100 SMS', days: 30, price: 39.99 },
+    { gb: '20 GB', voice: 'Unlimited min', sms: '100 SMS', days: 30, price: 39.99, global: true },
   ],
   unlimited: [
     { gb: 'Unlimited', perDay: '2 GB/day', days: 3,  price: 14.99 },
@@ -25,12 +26,56 @@ const PLANS = {
   ],
 };
 
+// PLACEHOLDER list of countries covered by the global plan (sample data, not the real coverage).
+// Replace with the real list; the count in the note and the popup both come from this array.
+const GLOBAL_COUNTRIES = [
+  'Australia', 'Austria', 'Belgium', 'Brazil', 'Cambodia', 'Canada', 'Chile', 'Croatia', 'Czechia', 'Denmark',
+  'Egypt', 'Finland', 'France', 'Germany', 'Greece', 'Hungary', 'India', 'Ireland', 'Italy', 'Japan',
+  'Kenya', 'Malaysia', 'Mexico', 'Morocco', 'Netherlands', 'New Zealand', 'Norway', 'Philippines', 'Poland', 'Portugal',
+  'Singapore', 'South Africa', 'South Korea', 'Spain', 'Sweden', 'Switzerland', 'Thailand', 'Turkey',
+  'United Arab Emirates', 'United Kingdom', 'United States', 'Vietnam',
+];
+
+(function initGlobalModal() {
+  const modal = document.getElementById('global-modal');
+  if (!modal) return;
+  const list = document.getElementById('gmodal-list');
+  const search = document.getElementById('gmodal-search');
+  const empty = document.getElementById('gmodal-empty');
+  const countries = [...GLOBAL_COUNTRIES].sort((a, b) => a.localeCompare(b));
+  document.getElementById('global-count').textContent = countries.length;
+  list.replaceChildren(...countries.map((c) => {
+    const li = document.createElement('li');
+    li.textContent = c;
+    return li;
+  }));
+  search.addEventListener('input', () => {
+    const q = search.value.trim().toLowerCase();
+    let shown = 0;
+    for (const li of list.children) {
+      const hit = li.textContent.toLowerCase().includes(q);
+      li.hidden = !hit;
+      if (hit) shown++;
+    }
+    empty.hidden = shown > 0;
+  });
+  document.getElementById('global-open').addEventListener('click', () => {
+    search.value = '';
+    search.dispatchEvent(new Event('input'));
+    modal.showModal();
+  });
+  document.getElementById('gmodal-close').addEventListener('click', () => modal.close());
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.close(); }); // backdrop click
+})();
+
 (function initPlanPicker() {
   const list = document.getElementById('plan-list');
   if (!list) return;
   const tabs = [...document.querySelectorAll('.tabs__btn')];
   const unlNote = document.getElementById('unl-note');
   const localNote = document.getElementById('local-note');
+  const globalNote = document.getElementById('global-note');
+  const GLOBE_SVG = '<svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="18" fill="#E3F0FF"/><g fill="none" stroke="#1A73E8" stroke-width="1.7" stroke-linecap="round"><circle cx="18" cy="18" r="8"/><ellipse cx="18" cy="18" rx="3.6" ry="8"/><path d="M10 18h16"/></g></svg>';
   const out = {
     plan: document.getElementById('o-plan'),
     price: document.getElementById('o-price'),
@@ -43,6 +88,7 @@ const PLANS = {
     const p = PLANS[kind][selected];
     out.plan.textContent = `${p.gb}${p.voice ? ` + ${p.voice}` : ''}${p.sms ? ` + ${p.sms}` : ''} · ${p.days} days`;
     out.price.textContent = usd(p.price);
+    globalNote.hidden = !p.global;
   }
 
   function select(i) {
@@ -87,6 +133,14 @@ const PLANS = {
         b.setAttribute('role', 'img');
         b.setAttribute('aria-label', 'Local plan');
         b.innerHTML = '<svg viewBox="0 0 36 36" aria-hidden="true"><rect width="36" height="36" rx="8" fill="#FFF4D9"/><path d="M19 10 18 16h7v2l-8 8.5h-1V20H9v-1z" fill="#F0B100" stroke="#F0B100" stroke-width=".8" stroke-linejoin="round"/></svg>';
+        el.append(b);
+      }
+      if (p.global) {
+        const b = document.createElement('span');
+        b.className = 'plan__local plan__local--global';
+        b.setAttribute('role', 'img');
+        b.setAttribute('aria-label', 'Global plan');
+        b.innerHTML = GLOBE_SVG;
         el.append(b);
       }
       if (p.tag) {
