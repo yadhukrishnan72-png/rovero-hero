@@ -1,7 +1,9 @@
 // Country page plan picker.
 // Plan fields: gb, days, price; voice + sms (Data + Voice plans); perDay (Unlimited: daily high-speed allowance);
 // tag (e.g. 'Most popular'); local: true shows the lightning badge and the "Local plan" box for that tab;
-// global: true shows the blue globe badge and the "Global plan" box while that plan is selected.
+// global: true shows the blue globe badge and the "Global plan" box while that plan is selected;
+// number: { country, code } (global Data + Voice plans) says which country's phone number the plan includes.
+// The Global plan note shows it, so nobody assumes it is a local number.
 // Plans, sizes and which ones are local differ per country; the page logic never checks sizes.
 // PLANS is sample data (only 1 GB / 7 days / $3.99 comes from the live page). Replace with your real plans / API.
 const PLANS = {
@@ -14,10 +16,11 @@ const PLANS = {
   ],
   // PLACEHOLDER voice bundles (minutes, SMS and prices are invented).
   voice: [
-    { gb: '3 GB',  voice: '100 min', sms: '25 SMS',  days: 15, price: 11.99, global: true },
+    // PLACEHOLDER: France (+33) is sample data for the included phone number
+    { gb: '3 GB',  voice: '100 min', sms: '25 SMS',  days: 15, price: 11.99, global: true, number: { country: 'France', code: '+33' } },
     { gb: '5 GB',  voice: '200 min', sms: '50 SMS',  days: 30, price: 17.99, tag: 'Most popular', local: true },
     { gb: '10 GB', voice: '300 min', sms: '75 SMS',  days: 30, price: 26.99, local: true },
-    { gb: '20 GB', voice: 'Unlimited min', sms: '100 SMS', days: 30, price: 39.99, global: true },
+    { gb: '20 GB', voice: 'Unlimited min', sms: '100 SMS', days: 30, price: 39.99, global: true, number: { country: 'France', code: '+33' } },
   ],
   unlimited: [
     { gb: 'Unlimited', perDay: '2 GB/day', days: 3,  price: 14.99 },
@@ -75,6 +78,7 @@ const GLOBAL_COUNTRIES = [
   const unlNote = document.getElementById('unl-note');
   const localNote = document.getElementById('local-note');
   const globalNote = document.getElementById('global-note');
+  const globalTail = document.getElementById('global-tail');
   const GLOBE_SVG = '<svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="18" fill="#E3F0FF"/><g fill="none" stroke="#1A73E8" stroke-width="1.7" stroke-linecap="round"><circle cx="18" cy="18" r="8"/><ellipse cx="18" cy="18" rx="3.6" ry="8"/><path d="M10 18h16"/></g></svg>';
   const out = {
     plan: document.getElementById('o-plan'),
@@ -89,6 +93,13 @@ const GLOBAL_COUNTRIES = [
     out.plan.textContent = `${p.gb}${p.voice ? ` + ${p.voice}` : ''}${p.sms ? ` + ${p.sms}` : ''} · ${p.days} days`;
     out.price.textContent = usd(p.price);
     globalNote.hidden = !p.global;
+    if (p.number) {
+      const s = document.createElement('strong');
+      s.textContent = `Includes a ${p.number.country} phone number (${p.number.code}).`;
+      globalTail.replaceChildren(s);
+    } else {
+      globalTail.textContent = 'Speeds depend on the partner network.';
+    }
   }
 
   function select(i) {
