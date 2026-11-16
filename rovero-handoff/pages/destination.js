@@ -3,7 +3,7 @@
 // Plan fields: gb, days, price; coverage (key into ROVERO_PAGE.coverage: the countries this plan works in; regions only);
 // optional: voice + sms (Data + Voice), perDay (Unlimited allowance), tag (e.g. 'Most popular'), local: true (lightning badge), global: true (blue globe badge + "Global plan" notice with a countries popup), number: { country, code } (global voice plans: the phone number included; shown in the Global plan notice),
 // scope: 'local' | '<key in ROVERO_PAGE.scopes>' (Data + Voice plans are grouped under a heading per scope, e.g. "Indonesia Only" / "Indonesia + Asia"),
-// intl: '60 min + 20 SMS' or null (international minutes + SMS, shown in the Details popup), noFup: true (truly unlimited, no daily cap: green infinity badge + note),
+// intl: '60 min + 20 SMS' or null (international minutes + SMS, shown in the Details popup), noFup: true (truly unlimited, no daily cap: green infinity badge + note; combine with local: true to show both badges),
 // more: true (hidden until the "More plans" link under the tiles is pressed; never the preselected plan).
 // The page logic never checks sizes or names: tabs, tiles, notices and the country sheet are all driven by this data.
 //
@@ -156,6 +156,7 @@
     }
     unlNote.hidden = !(kind === 'unlimited' && !p.noFup && P.unlimitedNote);
     noFupNote.hidden = !p.noFup;
+    localNote.hidden = !p.local;    // Local plan note follows the selected plan
     // Sticky pay bar
     $('s-days').textContent = `${p.days} days`;
     $('s-gb').textContent = p.noFup ? '\u221E ' + p.gb : p.gb;
@@ -209,7 +210,6 @@
     moreBtn.hidden = !PLANS[kind].some((p) => p.more);
     moreBtn.setAttribute('aria-expanded', 'false');
     moreBtn.textContent = 'More plans';
-    localNote.hidden = !PLANS[kind].some((p) => p.local);
 
     let lastScope = null;
     const nodes = [];
@@ -284,6 +284,8 @@
         b.innerHTML = INFINITY_BADGE;
         el.append(b);
       }
+      // A tile with two badges (e.g. local + truly unlimited): the second sits beside (desktop) or under (phones) the first
+      el.querySelectorAll('.plan__local').forEach((b, n) => { if (n > 0) b.classList.add('plan__local--next'); });
       if (p.voice) { // "Details" popup: Data + Voice plans only
         const d = document.createElement('button');
         d.type = 'button';

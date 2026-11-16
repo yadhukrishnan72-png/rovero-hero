@@ -87,7 +87,7 @@ A **plan**:
 | `number` | `{ country: 'France', code: '+33' }` on a global Data + Voice plan: says which country's phone number the plan includes. Shown in the Global notice ("Includes a France phone number (+33).", replacing the speeds line). Plans without it keep "Speeds depend on the partner network." |
 | `scope` | Data + Voice plans: `'local'` or a key of `scopes` (`'asia'`, `'global'`, ...). Plans are grouped under one heading per scope, in the order they appear in the data (put local first). Without `scope` the tab is one flat list |
 | `intl` | Data + Voice plans: international minutes + SMS ('60 min + 20 SMS'), or `null` for "Not included". Shown in the Details popup. Omit to hide the row |
-| `noFup` | Unlimited plans: `true` = truly unlimited, no daily cap (no FUP). Shows the green infinity badge, "No daily limit" on the tile and the "Truly unlimited" note. Leave off for capped plans (`perDay`) |
+| `noFup` | Unlimited plans: `true` = truly unlimited, no daily cap (no FUP). Shows the green infinity badge, "No daily limit" on the tile and the "Truly unlimited" note. Leave off for capped plans (`perDay`). Combine with `local: true` to show both badges (the second sits beside the first on desktop, under it on phones) |
 | `more` | `true` hides the plan until the **"More plans"** link under the tiles is pressed (used for the 100 MB plan). It is never the preselected plan |
 
 ### Plan scopes (Data + Voice sections)
@@ -110,7 +110,7 @@ See `data/pages/id.js` for a full example.
 Rules that follow from the data (nothing is hardcoded to sizes, counts or countries):
 - The tab bar shows only the plan kinds that exist (Data / Data + Voice / Unlimited). One kind means no tab bar.
 - Any number of tiles works (three per row, always square). Countries and regions can have different plans.
-- The capped-Unlimited notice shows while a capped Unlimited plan is selected; the green "Truly unlimited" notice shows for `noFup` plans; the Local-plan notice shows on any tab with a `local` plan.
+- The capped-Unlimited notice shows while a capped Unlimited plan is selected; the green "Truly unlimited" notice shows for `noFup` plans; the Local-plan notice shows only while a `local` plan is selected.
 
 ### Hooks for checkout
 

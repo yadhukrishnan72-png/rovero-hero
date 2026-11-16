@@ -292,3 +292,7 @@ body { padding-bottom: 5.5rem; }
   .stickypay__price strong { font-size: 1.125rem; }
   .stickypay__btn { padding: .875rem 1.25rem; font-size: .9375rem; }
 }
+
+/* Two badges on one tile (e.g. local + truly unlimited): side by side; on phones the second sits on the bottom-left corner */
+.plan__local--next { left: 2.5rem; }
+@media (max-width: 480px) { .plan__local--next { left: -.5rem; top: auto; bottom: -.5rem; } }

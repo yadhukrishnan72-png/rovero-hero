@@ -198,6 +198,7 @@ window.ROVERO_PAGE = {
       {
         "gb": "Unlimited",
         "noFup": true,
+      "local": true,
         "days": 15,
         "price": 49.99
       }

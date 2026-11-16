@@ -29,7 +29,7 @@ const PLANS = {
     { gb: 'Unlimited', perDay: '2 GB/day', days: 3,  price: 14.99 },
     { gb: 'Unlimited', perDay: '2 GB/day', days: 7,  price: 27.99, tag: 'Most popular' },
     // PLACEHOLDER: which plans have no daily cap (noFup: true) is sample data. noFup plans show the green infinity badge and the "Truly unlimited" note.
-    { gb: 'Unlimited', noFup: true, days: 15, price: 49.99 },
+    { gb: 'Unlimited', noFup: true, local: true, days: 15, price: 49.99 }, // PLACEHOLDER: local + truly unlimited sample (shows both badges)
   ],
 };
 
@@ -152,7 +152,8 @@ const openCountries = (function initGlobalModal() {
     document.getElementById('s-price').textContent = out.price.textContent;
     globalNote.hidden = !p.global;
     unlNote.hidden = !p.perDay;      // capped unlimited: 2 GB/day note
-    noFupNote.hidden = !p.noFup;     // truly unlimited note
+    noFupNote.hidden = !p.noFup;
+    localNote.hidden = !p.local;    // Local plan note follows the selected plan     // truly unlimited note
     if (p.global) {
       const sc = SCOPES[scopeOf(p)];
       globalLead.textContent = sc.note;
@@ -177,7 +178,6 @@ const openCountries = (function initGlobalModal() {
   function render() {
     const recommended = PLANS[kind].findIndex((p) => p.tag);
     selected = recommended >= 0 ? recommended : 0;
-    localNote.hidden = !PLANS[kind].some((p) => p.local);
     let lastScope = null;
     const nodes = [];
     PLANS[kind].forEach((p, i) => {
@@ -252,6 +252,8 @@ const openCountries = (function initGlobalModal() {
         b.innerHTML = '<svg viewBox="0 0 36 36" aria-hidden="true"><rect width="36" height="36" rx="8" fill="#E4F6EA"/><path d="M18 18c-1.8-2.6-3.2-4-5-4a4 4 0 0 0 0 8c1.8 0 3.2-1.4 5-4s3.2-4 5-4a4 4 0 0 1 0 8c-1.8 0-3.2-1.4-5-4z" fill="none" stroke="#1E9E55" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
         el.append(b);
       }
+      // A tile with two badges (e.g. local + truly unlimited): the second sits beside (desktop) or under (phones) the first
+      el.querySelectorAll('.plan__local').forEach((b, n) => { if (n > 0) b.classList.add('plan__local--next'); });
       if (p.tag) {
         const t = document.createElement('span');
         t.className = 'plan__tag';
