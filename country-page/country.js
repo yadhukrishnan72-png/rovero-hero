@@ -15,12 +15,15 @@ const PLANS = {
     { gb: '20 GB', days: 30, price: 32.99, global: true },
   ],
   // PLACEHOLDER voice bundles (minutes, SMS and prices are invented).
+  // scope: 'local' (Indonesia only), 'asia' (Indonesia + Asia) or 'global' (Indonesia + Global); the tab groups plans by it, in that order.
   voice: [
-    // PLACEHOLDER: France (+33) is sample data for the included phone number
-    { gb: '3 GB',  voice: '100 min', sms: '25 SMS',  days: 15, price: 11.99, global: true, number: { country: 'France', code: '+33' } },
-    { gb: '5 GB',  voice: '200 min', sms: '50 SMS',  days: 30, price: 17.99, tag: 'Most popular', local: true },
-    { gb: '10 GB', voice: '300 min', sms: '75 SMS',  days: 30, price: 26.99, local: true },
-    { gb: '20 GB', voice: 'Unlimited min', sms: '100 SMS', days: 30, price: 39.99, global: true, number: { country: 'France', code: '+33' } },
+    { scope: 'local',  gb: '5 GB',  voice: '200 min', sms: '50 SMS',  days: 30, price: 17.99, tag: 'Most popular', local: true },
+    { scope: 'local',  gb: '10 GB', voice: '300 min', sms: '75 SMS',  days: 30, price: 26.99, local: true },
+    // PLACEHOLDER: Singapore (+65) and France (+33) are sample data for the included phone number
+    { scope: 'asia',   gb: '3 GB',  voice: '100 min', sms: '25 SMS',  days: 15, price: 11.99, global: true, number: { country: 'Singapore', code: '+65' } },
+    { scope: 'asia',   gb: '10 GB', voice: '300 min', sms: '75 SMS',  days: 30, price: 24.99, global: true, number: { country: 'Singapore', code: '+65' } },
+    { scope: 'global', gb: '5 GB',  voice: '150 min', sms: '50 SMS',  days: 30, price: 29.99, global: true, number: { country: 'France', code: '+33' } },
+    { scope: 'global', gb: '20 GB', voice: 'Unlimited min', sms: '100 SMS', days: 30, price: 39.99, global: true, number: { country: 'France', code: '+33' } },
   ],
   unlimited: [
     { gb: 'Unlimited', perDay: '2 GB/day', days: 3,  price: 14.99 },
@@ -29,8 +32,11 @@ const PLANS = {
   ],
 };
 
-// PLACEHOLDER list of countries covered by the global plan (sample data, not the real coverage).
-// Replace with the real list; the count in the note and the popup both come from this array.
+// PLACEHOLDER country lists (sample data, not the real coverage). The counts in the note and the popup come from these arrays.
+const ASIA_COUNTRIES = [
+  'Cambodia', 'China', 'Hong Kong', 'India', 'Japan', 'Laos', 'Macao', 'Malaysia', 'Philippines', 'Singapore',
+  'South Korea', 'Sri Lanka', 'Taiwan', 'Thailand', 'Vietnam',
+];
 const GLOBAL_COUNTRIES = [
   'Australia', 'Austria', 'Belgium', 'Brazil', 'Cambodia', 'Canada', 'Chile', 'Croatia', 'Czechia', 'Denmark',
   'Egypt', 'Finland', 'France', 'Germany', 'Greece', 'Hungary', 'India', 'Ireland', 'Italy', 'Japan',
@@ -38,20 +44,20 @@ const GLOBAL_COUNTRIES = [
   'Singapore', 'South Africa', 'South Korea', 'Spain', 'Sweden', 'Switzerland', 'Thailand', 'Turkey',
   'United Arab Emirates', 'United Kingdom', 'United States', 'Vietnam',
 ];
+const SCOPES = {
+  local:  { title: 'Indonesia Only',     sub: 'Works in Indonesia only. Includes an Indonesian number.' },
+  asia:   { title: 'Indonesia + Asia',   sub: 'Works in Indonesia and other Asian countries.', note: 'Asia plan.', where: 'other Asian countries', countries: ASIA_COUNTRIES },
+  global: { title: 'Indonesia + Global', sub: 'Works in Indonesia and countries around the world.', note: 'Global plan.', where: 'other countries', countries: GLOBAL_COUNTRIES },
+};
+const scopeOf = (p) => p.scope || (p.global ? 'global' : 'local');
 
-(function initGlobalModal() {
+const openCountries = (function initGlobalModal() {
   const modal = document.getElementById('global-modal');
-  if (!modal) return;
+  if (!modal) return () => {};
   const list = document.getElementById('gmodal-list');
   const search = document.getElementById('gmodal-search');
   const empty = document.getElementById('gmodal-empty');
-  const countries = [...GLOBAL_COUNTRIES].sort((a, b) => a.localeCompare(b));
-  document.getElementById('global-count').textContent = countries.length;
-  list.replaceChildren(...countries.map((c) => {
-    const li = document.createElement('li');
-    li.textContent = c;
-    return li;
-  }));
+  const title = document.getElementById('gmodal-title');
   search.addEventListener('input', () => {
     const q = search.value.trim().toLowerCase();
     let shown = 0;
@@ -62,13 +68,20 @@ const GLOBAL_COUNTRIES = [
     }
     empty.hidden = shown > 0;
   });
-  document.getElementById('global-open').addEventListener('click', () => {
+  document.getElementById('gmodal-close').addEventListener('click', () => modal.close());
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.close(); }); // backdrop click
+  return (scope) => {
+    const sc = SCOPES[scope] || SCOPES.global;
+    title.textContent = `${sc.title} countries`;
+    list.replaceChildren(...[...sc.countries].sort((a, b) => a.localeCompare(b)).map((c) => {
+      const li = document.createElement('li');
+      li.textContent = c;
+      return li;
+    }));
     search.value = '';
     search.dispatchEvent(new Event('input'));
     modal.showModal();
-  });
-  document.getElementById('gmodal-close').addEventListener('click', () => modal.close());
-  modal.addEventListener('click', (e) => { if (e.target === modal) modal.close(); }); // backdrop click
+  };
 })();
 
 (function initPlanPicker() {
@@ -79,6 +92,11 @@ const GLOBAL_COUNTRIES = [
   const localNote = document.getElementById('local-note');
   const globalNote = document.getElementById('global-note');
   const globalTail = document.getElementById('global-tail');
+  const globalLead = document.getElementById('global-lead');
+  const globalCount = document.getElementById('global-count');
+  const globalWhere = document.getElementById('global-where');
+  const plansEl = () => [...list.querySelectorAll('.plan')];
+  document.getElementById('global-open').addEventListener('click', () => openCountries(scopeOf(PLANS[kind][selected])));
   const GLOBE_SVG = '<svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="18" fill="#E3F0FF"/><g fill="none" stroke="#1A73E8" stroke-width="1.7" stroke-linecap="round"><circle cx="18" cy="18" r="8"/><ellipse cx="18" cy="18" rx="3.6" ry="8"/><path d="M10 18h16"/></g></svg>';
   const out = {
     plan: document.getElementById('o-plan'),
@@ -93,6 +111,12 @@ const GLOBAL_COUNTRIES = [
     out.plan.textContent = `${p.gb}${p.voice ? ` + ${p.voice}` : ''}${p.sms ? ` + ${p.sms}` : ''} · ${p.days} days`;
     out.price.textContent = usd(p.price);
     globalNote.hidden = !p.global;
+    if (p.global) {
+      const sc = SCOPES[scopeOf(p)];
+      globalLead.textContent = sc.note;
+      globalCount.textContent = sc.countries.length;
+      globalWhere.textContent = sc.where;
+    }
     if (p.number) {
       const s = document.createElement('strong');
       s.textContent = `Includes a ${p.number.country} phone number (${p.number.code}).`;
@@ -104,7 +128,7 @@ const GLOBAL_COUNTRIES = [
 
   function select(i) {
     selected = i;
-    [...list.children].forEach((el, n) => el.setAttribute('aria-checked', String(n === i)));
+    plansEl().forEach((el, n) => el.setAttribute('aria-checked', String(n === i)));
     summarise();
   }
 
@@ -112,7 +136,29 @@ const GLOBAL_COUNTRIES = [
     const recommended = PLANS[kind].findIndex((p) => p.tag);
     selected = recommended >= 0 ? recommended : 0;
     localNote.hidden = !PLANS[kind].some((p) => p.local);
-    list.replaceChildren(...PLANS[kind].map((p, i) => {
+    let lastScope = null;
+    const nodes = [];
+    PLANS[kind].forEach((p, i) => {
+      if (p.scope && p.scope !== lastScope) {
+        lastScope = p.scope;
+        const sc = SCOPES[p.scope];
+        const h = document.createElement('div');
+        h.className = `plan-group plan-group--${p.scope}`;
+        const t = document.createElement('h3');
+        t.textContent = sc.title;
+        const sub = document.createElement('p');
+        sub.textContent = sc.sub;
+        h.append(t, sub);
+        if (sc.countries) {
+          const lnk = document.createElement('button');
+          lnk.type = 'button';
+          lnk.className = 'linkbtn';
+          lnk.textContent = `See all ${sc.countries.length} countries`;
+          lnk.addEventListener('click', () => openCountries(p.scope));
+          sub.append(' ', lnk);
+        }
+        nodes.push(h);
+      }
       const el = document.createElement('button');
       el.type = 'button';
       el.className = 'plan' + (p.voice ? ' plan--voice' : '');
@@ -161,8 +207,9 @@ const GLOBAL_COUNTRIES = [
         el.append(t);
       }
       el.addEventListener('click', () => select(i));
-      return el;
-    }));
+      nodes.push(el);
+    });
+    list.replaceChildren(...nodes);
     select(selected);
   }
 
@@ -173,7 +220,7 @@ const GLOBAL_COUNTRIES = [
     if (!step) return;
     e.preventDefault();
     select((selected + step + n) % n);
-    list.children[selected].focus();
+    plansEl()[selected].focus();
   });
 
   tabs.forEach((tab) => tab.addEventListener('click', () => {
