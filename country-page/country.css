@@ -95,6 +95,15 @@ button { font-family: inherit; }
 .plan-group p { margin-top: .125rem; font-size: .8125rem; color: var(--rv-muted); }
 .plan-group--asia h3, .plan-group--global h3 { color: #1A73E8; }
 
+/* "More details" link under each tile + its popup */
+.plan-cell { display: flex; flex-direction: column; gap: .375rem; min-width: 0; }
+.plan-more { align-self: flex-start; font-size: .75rem; font-weight: 600; padding: .125rem 0; }
+.dmodal__list { margin: 0; padding: .25rem 1.25rem 1.25rem; overflow-y: auto; }
+.dmodal__list div { padding: .625rem 0; border-bottom: 1px solid var(--rv-line); }
+.dmodal__list div:last-child { border-bottom: 0; }
+.dmodal__list dt { font-size: .75rem; font-weight: 600; color: var(--rv-muted); }
+.dmodal__list dd { margin: .125rem 0 0; font-size: .9375rem; font-weight: 600; }
+
 /* Plan tiles: square, three per row at every width. Data size leads, price sits at the foot. */
 .plan-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; }
 .plan { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; aspect-ratio: 1; min-width: 0; padding: .75rem .5rem; text-align: center; background: var(--rv-card); border: 1.5px solid var(--rv-line); border-radius: var(--rv-radius); cursor: pointer; transition: border-color .2s, box-shadow .2s, background .2s; }

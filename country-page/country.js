@@ -17,13 +17,13 @@ const PLANS = {
   // PLACEHOLDER voice bundles (minutes, SMS and prices are invented).
   // scope: 'local' (Indonesia only), 'asia' (Indonesia + Asia) or 'global' (Indonesia + Global); the tab groups plans by it, in that order.
   voice: [
-    { scope: 'local',  gb: '5 GB',  voice: '200 min', sms: '50 SMS',  days: 30, price: 17.99, tag: 'Most popular', local: true },
-    { scope: 'local',  gb: '10 GB', voice: '300 min', sms: '75 SMS',  days: 30, price: 26.99, local: true },
+    { scope: 'local',  gb: '5 GB',  voice: '200 min', sms: '50 SMS',  days: 30, price: 17.99, intl: null, tag: 'Most popular', local: true },
+    { scope: 'local',  gb: '10 GB', voice: '300 min', sms: '75 SMS',  days: 30, price: 26.99, intl: null, local: true },
     // PLACEHOLDER: Singapore (+65) and France (+33) are sample data for the included phone number
-    { scope: 'asia',   gb: '3 GB',  voice: '100 min', sms: '25 SMS',  days: 15, price: 11.99, global: true, number: { country: 'Singapore', code: '+65' } },
-    { scope: 'asia',   gb: '10 GB', voice: '300 min', sms: '75 SMS',  days: 30, price: 24.99, global: true, number: { country: 'Singapore', code: '+65' } },
-    { scope: 'global', gb: '5 GB',  voice: '150 min', sms: '50 SMS',  days: 30, price: 29.99, global: true, number: { country: 'France', code: '+33' } },
-    { scope: 'global', gb: '20 GB', voice: 'Unlimited min', sms: '100 SMS', days: 30, price: 39.99, global: true, number: { country: 'France', code: '+33' } },
+    { scope: 'asia',   gb: '3 GB',  voice: '100 min', sms: '25 SMS',  days: 15, price: 11.99, intl: '30 min + 10 SMS', global: true, number: { country: 'Singapore', code: '+65' } },
+    { scope: 'asia',   gb: '10 GB', voice: '300 min', sms: '75 SMS',  days: 30, price: 24.99, intl: '60 min + 20 SMS', global: true, number: { country: 'Singapore', code: '+65' } },
+    { scope: 'global', gb: '5 GB',  voice: '150 min', sms: '50 SMS',  days: 30, price: 29.99, intl: '60 min + 25 SMS', global: true, number: { country: 'France', code: '+33' } },
+    { scope: 'global', gb: '20 GB', voice: 'Unlimited min', sms: '100 SMS', days: 30, price: 39.99, intl: '100 min + 50 SMS', global: true, number: { country: 'France', code: '+33' } },
   ],
   unlimited: [
     { gb: 'Unlimited', perDay: '2 GB/day', days: 3,  price: 14.99 },
@@ -31,6 +31,10 @@ const PLANS = {
     { gb: 'Unlimited', perDay: '2 GB/day', days: 15, price: 49.99 },
   ],
 };
+
+// PLACEHOLDER: intl (international minutes + SMS), the Indonesian number (+62) and the activation text are sample data, not real terms.
+// intl: null means no international allowance. The "More details" popup builds its rows from the plan fields.
+const ACTIVATION = 'Starts when the eSIM first connects to a supported network, or when the package\'s activation policy begins.';
 
 // PLACEHOLDER country lists (sample data, not the real coverage). The counts in the note and the popup come from these arrays.
 const ASIA_COUNTRIES = [
@@ -95,6 +99,33 @@ const openCountries = (function initGlobalModal() {
   const globalLead = document.getElementById('global-lead');
   const globalCount = document.getElementById('global-count');
   const globalWhere = document.getElementById('global-where');
+  const dModal = document.getElementById('details-modal');
+  function showDetails(p) {
+    const sc = SCOPES[scopeOf(p)];
+    const rows = [];
+    if (p.perDay) rows.push(['Data', `Unlimited (${p.perDay} high-speed)`]);
+    else rows.push(['Data', p.gb]);
+    rows.push(['Validity', `${p.days} days`]);
+    rows.push(['Coverage', p.scope ? sc.title : (p.global ? 'Indonesia + Global' : 'Indonesia')]);
+    if (p.voice) {
+      rows.push(['Calls', p.voice]);
+      rows.push(['SMS', p.sms]);
+      rows.push(['International minutes & SMS', p.intl || 'Not included']);
+      rows.push(['Phone number', p.number ? `${p.number.country} (${p.number.code})` : 'Indonesia (+62)']);
+    }
+    rows.push(['Activation policy', ACTIVATION]);
+    document.getElementById('dmodal-title').textContent = `${p.gb}${p.voice ? ' + Voice' : ''} · ${p.days} days`;
+    document.getElementById('dmodal-list').replaceChildren(...rows.map(([k, v]) => {
+      const d = document.createElement('div');
+      const dt = document.createElement('dt'); dt.textContent = k;
+      const dd = document.createElement('dd'); dd.textContent = v;
+      d.append(dt, dd);
+      return d;
+    }));
+    dModal.showModal();
+  }
+  document.getElementById('dmodal-close').addEventListener('click', () => dModal.close());
+  dModal.addEventListener('click', (e) => { if (e.target === dModal) dModal.close(); });
   const plansEl = () => [...list.querySelectorAll('.plan')];
   document.getElementById('global-open').addEventListener('click', () => openCountries(scopeOf(PLANS[kind][selected])));
   const GLOBE_SVG = '<svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="18" fill="#E3F0FF"/><g fill="none" stroke="#1A73E8" stroke-width="1.7" stroke-linecap="round"><circle cx="18" cy="18" r="8"/><ellipse cx="18" cy="18" rx="3.6" ry="8"/><path d="M10 18h16"/></g></svg>';
@@ -207,7 +238,19 @@ const openCountries = (function initGlobalModal() {
         el.append(t);
       }
       el.addEventListener('click', () => select(i));
-      nodes.push(el);
+      if (p.voice) { // "More details" only on Data + Voice plans
+        const cell = document.createElement('div');
+        cell.className = 'plan-cell';
+        const more = document.createElement('button');
+        more.type = 'button';
+        more.className = 'linkbtn plan-more';
+        more.textContent = 'More details';
+        more.addEventListener('click', () => showDetails(p));
+        cell.append(el, more);
+        nodes.push(cell);
+      } else {
+        nodes.push(el);
+      }
     });
     list.replaceChildren(...nodes);
     select(selected);
