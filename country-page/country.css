@@ -267,3 +267,13 @@ section h2 { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800; letter-spaci
   .plan-list { gap: .625rem; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } html { scroll-behavior: auto; } }
+
+/* Sticky pay bar: shown until the real order summary scrolls into view */
+.stickypay { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; padding: .75rem 1rem calc(.75rem + env(safe-area-inset-bottom)); background: #fff; box-shadow: 0 -4px 20px rgba(17, 24, 39, .12); transform: translateY(110%); transition: transform .25s ease; pointer-events: none; }
+.stickypay.is-visible { transform: none; pointer-events: auto; }
+.stickypay__inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; max-width: 36rem; margin: 0 auto; }
+.stickypay__info { display: flex; flex-direction: column; min-width: 0; }
+.stickypay__info span { font-size: .8125rem; font-weight: 600; color: var(--rv-muted); }
+.stickypay__info strong { font-size: 1.25rem; font-weight: 800; letter-spacing: -.02em; }
+.stickypay__btn { width: auto; flex: none; padding: .875rem 1.75rem; }
+body { padding-bottom: 5rem; }

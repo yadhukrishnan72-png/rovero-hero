@@ -141,6 +141,8 @@ const openCountries = (function initGlobalModal() {
     const p = PLANS[kind][selected];
     out.plan.textContent = `${p.gb}${p.voice ? ` + ${p.voice}` : ''}${p.sms ? ` + ${p.sms}` : ''} · ${p.days} days`;
     out.price.textContent = usd(p.price);
+    document.getElementById('s-plan').textContent = out.plan.textContent;
+    document.getElementById('s-price').textContent = out.price.textContent;
     globalNote.hidden = !p.global;
     if (p.global) {
       const sc = SCOPES[scopeOf(p)];
@@ -274,4 +276,16 @@ const openCountries = (function initGlobalModal() {
   }));
 
   render();
+})();
+
+// Sticky pay bar: mirrors the selected plan, fires the real Pay now button, and hides while the order summary is on screen.
+(function initStickyPay() {
+  const bar = document.getElementById('stickypay');
+  const order = document.querySelector('.order');
+  if (!bar || !order) return;
+  document.getElementById('s-pay').addEventListener('click', () => document.getElementById('pay').click());
+  const set = (show) => { bar.classList.toggle('is-visible', show); bar.setAttribute('aria-hidden', String(!show)); document.getElementById('s-pay').tabIndex = show ? 0 : -1; };
+  set(true);
+  if (!('IntersectionObserver' in window)) return;
+  new IntersectionObserver(([e]) => set(!e.isIntersecting)).observe(order);
 })();
