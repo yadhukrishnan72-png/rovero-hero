@@ -244,7 +244,7 @@ const openCountries = (function initGlobalModal() {
         const more = document.createElement('button');
         more.type = 'button';
         more.className = 'linkbtn plan-more';
-        more.textContent = 'More details';
+        more.textContent = 'Details';
         more.addEventListener('click', () => showDetails(p));
         cell.append(el, more);
         nodes.push(cell);
