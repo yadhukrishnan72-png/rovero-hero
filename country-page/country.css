@@ -273,7 +273,6 @@ section h2 { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800; letter-spaci
 .stickypay.is-visible { transform: none; pointer-events: auto; }
 .stickypay__inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; max-width: 36rem; margin: 0 auto; }
 .stickypay__info { display: flex; flex-direction: column; min-width: 0; }
-.stickypay__info span { font-size: .8125rem; font-weight: 600; color: var(--rv-muted); }
-.stickypay__info strong { font-size: 1.25rem; font-weight: 800; letter-spacing: -.02em; }
-.stickypay__btn { width: auto; flex: none; padding: .875rem 1.75rem; }
+.stickypay__info span { font-size: .9375rem; font-weight: 700; color: var(--rv-ink); }
+.stickypay__btn { width: auto; flex: none; padding: .875rem 1.5rem; white-space: nowrap; }
 body { padding-bottom: 5rem; }
