@@ -28,7 +28,8 @@ const PLANS = {
   unlimited: [
     { gb: 'Unlimited', perDay: '2 GB/day', days: 3,  price: 14.99 },
     { gb: 'Unlimited', perDay: '2 GB/day', days: 7,  price: 27.99, tag: 'Most popular' },
-    { gb: 'Unlimited', perDay: '2 GB/day', days: 15, price: 49.99 },
+    // PLACEHOLDER: which plans have no daily cap (noFup: true) is sample data. noFup plans show the green infinity badge and the "Truly unlimited" note.
+    { gb: 'Unlimited', noFup: true, days: 15, price: 49.99 },
   ],
 };
 
@@ -93,6 +94,7 @@ const openCountries = (function initGlobalModal() {
   if (!list) return;
   const tabs = [...document.querySelectorAll('.tabs__btn')];
   const unlNote = document.getElementById('unl-note');
+  const noFupNote = document.getElementById('nofup-note');
   const localNote = document.getElementById('local-note');
   const globalNote = document.getElementById('global-note');
   const globalTail = document.getElementById('global-tail');
@@ -144,10 +146,13 @@ const openCountries = (function initGlobalModal() {
     document.getElementById('s-days').textContent = `${p.days} days`;
     document.getElementById('s-gb').textContent = p.gb;
     const extra = document.getElementById('s-extra'); // voice: minutes + SMS; unlimited: daily allowance; data: none
-    extra.textContent = p.voice ? `${p.voice} + ${p.sms}` : (p.perDay || '');
+    extra.textContent = p.voice ? `${p.voice} + ${p.sms}` : (p.noFup ? 'No daily limit' : (p.perDay || ''));
+    document.getElementById('s-gb').textContent = p.noFup ? '∞ Unlimited' : p.gb;
     extra.hidden = !extra.textContent;
     document.getElementById('s-price').textContent = out.price.textContent;
     globalNote.hidden = !p.global;
+    unlNote.hidden = !p.perDay;      // capped unlimited: 2 GB/day note
+    noFupNote.hidden = !p.noFup;     // truly unlimited note
     if (p.global) {
       const sc = SCOPES[scopeOf(p)];
       globalLead.textContent = sc.note;
@@ -203,7 +208,7 @@ const openCountries = (function initGlobalModal() {
       el.innerHTML = `
         <span class="plan__dot" aria-hidden="true"></span>
         <span class="plan__data"></span>
-        ${p.voice || p.perDay ? '<span class="plan__voice"></span>' : ''}
+        ${p.voice || p.perDay || p.noFup ? '<span class="plan__voice"></span>' : ''}
         <span class="plan__meta"></span>
         <span class="plan__price"></span>`;
       const data = el.querySelector('.plan__data');
@@ -216,6 +221,8 @@ const openCountries = (function initGlobalModal() {
           s.textContent = t;
           extra.append(s, ' ');
         }
+      } else if (p.noFup) {
+        extra.textContent = 'No daily limit';
       } else if (p.perDay) {
         extra.textContent = p.perDay;
       }
@@ -235,6 +242,14 @@ const openCountries = (function initGlobalModal() {
         b.setAttribute('role', 'img');
         b.setAttribute('aria-label', 'Global plan');
         b.innerHTML = GLOBE_SVG;
+        el.append(b);
+      }
+      if (p.noFup) {
+        const b = document.createElement('span');
+        b.className = 'plan__local plan__local--nofup';
+        b.setAttribute('role', 'img');
+        b.setAttribute('aria-label', 'Truly unlimited');
+        b.innerHTML = '<svg viewBox="0 0 36 36" aria-hidden="true"><rect width="36" height="36" rx="8" fill="#E4F6EA"/><path d="M18 18c-1.8-2.6-3.2-4-5-4a4 4 0 0 0 0 8c1.8 0 3.2-1.4 5-4s3.2-4 5-4a4 4 0 0 1 0 8c-1.8 0-3.2-1.4-5-4z" fill="none" stroke="#1E9E55" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
         el.append(b);
       }
       if (p.tag) {
@@ -274,7 +289,6 @@ const openCountries = (function initGlobalModal() {
 
   tabs.forEach((tab) => tab.addEventListener('click', () => {
     kind = tab.dataset.kind;
-    unlNote.hidden = kind !== 'unlimited';
     tabs.forEach((t) => t.setAttribute('aria-selected', String(t === tab)));
     render();
   }));
