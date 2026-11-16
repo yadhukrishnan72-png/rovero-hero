@@ -8,7 +8,50 @@ window.ROVERO_PAGE = {
   "alt": "Illustration: Balinese split gate and palms at sunset",
   "_note": "EXAMPLE DATA. Plan sizes, prices, voice/SMS bundles, local flags and networks are placeholders.",
   "_globalNote": "PLACEHOLDER country list for plans flagged global:true. Replace with the real coverage.",
-  "globalCountries": ["Australia", "Austria", "Belgium", "Brazil", "Cambodia", "Canada", "Chile", "Croatia", "Czechia", "Denmark", "Egypt", "Finland", "France", "Germany", "Greece", "Hungary", "India", "Ireland", "Italy", "Japan", "Kenya", "Malaysia", "Mexico", "Morocco", "Netherlands", "New Zealand", "Norway", "Philippines", "Poland", "Portugal", "Singapore", "South Africa", "South Korea", "Spain", "Sweden", "Switzerland", "Thailand", "Turkey", "United Arab Emirates", "United Kingdom", "United States", "Vietnam"],
+  "globalCountries": [
+    "Australia",
+    "Austria",
+    "Belgium",
+    "Brazil",
+    "Cambodia",
+    "Canada",
+    "Chile",
+    "Croatia",
+    "Czechia",
+    "Denmark",
+    "Egypt",
+    "Finland",
+    "France",
+    "Germany",
+    "Greece",
+    "Hungary",
+    "India",
+    "Ireland",
+    "Italy",
+    "Japan",
+    "Kenya",
+    "Malaysia",
+    "Mexico",
+    "Morocco",
+    "Netherlands",
+    "New Zealand",
+    "Norway",
+    "Philippines",
+    "Poland",
+    "Portugal",
+    "Singapore",
+    "South Africa",
+    "South Korea",
+    "Spain",
+    "Sweden",
+    "Switzerland",
+    "Thailand",
+    "Turkey",
+    "United Arab Emirates",
+    "United Kingdom",
+    "United States",
+    "Vietnam"
+  ],
   "plans": {
     "data": [
       {
@@ -53,39 +96,89 @@ window.ROVERO_PAGE = {
     ],
     "voice": [
       {
-        "gb": "3 GB",
-        "voice": "100 min",
-        "sms": "25 SMS",
-        "days": 15,
-        "price": 11.99,
-        "global": true,
-        "number": { "country": "France", "code": "+33" }
-      },
-      {
+        "scope": "local",
         "gb": "5 GB",
         "voice": "200 min",
         "sms": "50 SMS",
         "days": 30,
         "price": 17.99,
         "tag": "Most popular",
-        "local": true
+        "local": true,
+        "intl": null,
+        "number": {
+          "country": "Indonesia",
+          "code": "+62"
+        }
       },
       {
+        "scope": "local",
         "gb": "10 GB",
         "voice": "300 min",
         "sms": "75 SMS",
         "days": 30,
         "price": 26.99,
-        "local": true
+        "local": true,
+        "intl": null,
+        "number": {
+          "country": "Indonesia",
+          "code": "+62"
+        }
       },
       {
+        "scope": "asia",
+        "gb": "3 GB",
+        "voice": "100 min",
+        "sms": "25 SMS",
+        "days": 15,
+        "price": 11.99,
+        "global": true,
+        "intl": "30 min + 10 SMS",
+        "number": {
+          "country": "Singapore",
+          "code": "+65"
+        }
+      },
+      {
+        "scope": "asia",
+        "gb": "10 GB",
+        "voice": "300 min",
+        "sms": "75 SMS",
+        "days": 30,
+        "price": 24.99,
+        "global": true,
+        "intl": "60 min + 20 SMS",
+        "number": {
+          "country": "Singapore",
+          "code": "+65"
+        }
+      },
+      {
+        "scope": "global",
+        "gb": "5 GB",
+        "voice": "150 min",
+        "sms": "50 SMS",
+        "days": 30,
+        "price": 29.99,
+        "global": true,
+        "intl": "60 min + 25 SMS",
+        "number": {
+          "country": "France",
+          "code": "+33"
+        }
+      },
+      {
+        "scope": "global",
         "gb": "20 GB",
         "voice": "Unlimited min",
         "sms": "100 SMS",
         "days": 30,
         "price": 39.99,
         "global": true,
-        "number": { "country": "France", "code": "+33" }
+        "intl": "100 min + 50 SMS",
+        "number": {
+          "country": "France",
+          "code": "+33"
+        }
       }
     ],
     "unlimited": [
@@ -104,7 +197,7 @@ window.ROVERO_PAGE = {
       },
       {
         "gb": "Unlimited",
-        "perDay": "2 GB/day",
+        "noFup": true,
         "days": 15,
         "price": 49.99
       }
@@ -138,5 +231,41 @@ window.ROVERO_PAGE = {
     }
   ],
   "relatedTitle": "One eSIM, many trips",
-  "relatedText": "Add a plan for your next destination and track all your data in one dashboard."
+  "relatedText": "Add a plan for your next destination and track all your data in one dashboard.",
+  "_scopesNote": "PLACEHOLDER: scopes group the Data + Voice plans under headings (plan.scope = 'local' | 'asia' | 'global'). The Asia country list, numbers, minutes and activation text are samples. Replace with real data.",
+  "scopes": {
+    "local": {
+      "title": "Indonesia Only",
+      "sub": "Works in Indonesia only. Includes an Indonesian number."
+    },
+    "asia": {
+      "title": "Indonesia + Asia",
+      "sub": "Works in Indonesia and other Asian countries.",
+      "note": "Asia plan.",
+      "where": "other Asian countries",
+      "countries": [
+        "Cambodia",
+        "China",
+        "Hong Kong",
+        "India",
+        "Japan",
+        "Laos",
+        "Macao",
+        "Malaysia",
+        "Philippines",
+        "Singapore",
+        "South Korea",
+        "Sri Lanka",
+        "Taiwan",
+        "Thailand",
+        "Vietnam"
+      ]
+    },
+    "global": {
+      "title": "Indonesia + Global",
+      "sub": "Works in Indonesia and countries around the world.",
+      "note": "Global plan.",
+      "where": "other countries"
+    }
+  }
 };

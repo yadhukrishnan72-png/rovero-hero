@@ -59,6 +59,13 @@ tools/                 optional: the generator that made the scenes (see tools/R
   networks: [{ name: '...', tech: '4G / 5G' }],     // countries only; omit or [] to hide the row
   plans: { data: [ ...plan ], voice: [ ...plan ], unlimited: [ ...plan ] },
   coverage: { 'eu-42': ['Austria', 'Belgium', ...] },   // regions only: country names per coverage group
+  scopes: {                                       // optional: groups Data + Voice plans under headings (see "Plan scopes")
+    local:  { title: 'Indonesia Only', sub: 'Works in Indonesia only. Includes an Indonesian number.' },
+    asia:   { title: 'Indonesia + Asia', sub: '...', note: 'Asia plan.', where: 'other Asian countries', countries: ['Japan', ...] },
+    global: { title: 'Indonesia + Global', sub: '...', note: 'Global plan.', where: 'other countries' }   // countries default to globalCountries
+  },
+  activation: 'Starts when ...',                  // optional: activation-policy text in the Details popup (default provided)
+  noFupNote: { strong: 'Truly unlimited.', text: ' No daily limit and no speed reduction.' },   // optional, default shown
   unlimitedNote: { strong: '2 GB of high-speed data every day.', text: ' After that, speed reduces to 1 MB/s.' },
   related: [{ label: 'Global', href: '/destinations/gl-120', image: '../assets/destinations/gl-120.svg' }],
   relatedTitle: 'Explore more eSIM plans',      // optional
@@ -78,12 +85,32 @@ A **plan**:
 | `local` | `true` shows the gold lightning badge and the "Local plan" notice on that tab |
 | `global` | `true` shows the blue globe badge on the tile. While that plan is selected, a "Global plan" notice appears with a "See all countries" link that opens a searchable popup of `globalCountries` (a top-level array in the page data; the count is taken from it). Without `globalCountries` the notice stays hidden |
 | `number` | `{ country: 'France', code: '+33' }` on a global Data + Voice plan: says which country's phone number the plan includes. Shown in the Global notice ("Includes a France phone number (+33).", replacing the speeds line). Plans without it keep "Speeds depend on the partner network." |
+| `scope` | Data + Voice plans: `'local'` or a key of `scopes` (`'asia'`, `'global'`, ...). Plans are grouped under one heading per scope, in the order they appear in the data (put local first). Without `scope` the tab is one flat list |
+| `intl` | Data + Voice plans: international minutes + SMS ('60 min + 20 SMS'), or `null` for "Not included". Shown in the Details popup. Omit to hide the row |
+| `noFup` | Unlimited plans: `true` = truly unlimited, no daily cap (no FUP). Shows the green infinity badge, "No daily limit" on the tile and the "Truly unlimited" note. Leave off for capped plans (`perDay`) |
 | `more` | `true` hides the plan until the **"More plans"** link under the tiles is pressed (used for the 100 MB plan). It is never the preselected plan |
+
+### Plan scopes (Data + Voice sections)
+
+Set `scope` on Data + Voice plans so the customer can tell where each plan works: **"Indonesia Only"** (local number and network),
+**"Indonesia + Asia"** and **"Indonesia + Global"** (regional / worldwide plans, other countries and usually a foreign phone number).
+Each section has its own heading and a one-line coverage text (`scopes.<key>.sub`). Non-local sections get a "See all N countries" link
+and, while one of their plans is selected, a notice ("Asia plan." / "Global plan.") with the same countries popup. Country lists come from
+`scopes.<key>.countries` (the global scope falls back to `globalCountries`). The badges are unchanged: gold lightning = local, blue globe = regional or global.
+See `data/pages/id.js` for a full example.
+
+### Details popup, sticky pay bar
+
+- **Details**: every Data + Voice tile has a small "Details" link (bottom-right) that opens a popup: Data, Validity, Coverage, Calls, SMS,
+  International minutes & SMS (`intl`), Phone number (`number`) and Activation policy (`activation`). Rows with no data are skipped.
+- **Sticky pay bar**: a bar fixed to the bottom of the screen shows "days | data | calls and SMS (or daily allowance)", the price (USD) and **Pay now**.
+  It updates with the selected plan, and hides while the order summary (the real Pay now button) is on screen. Its button presses the real Pay now button,
+  so `rovero:pay` is fired once, from one place.
 
 Rules that follow from the data (nothing is hardcoded to sizes, counts or countries):
 - The tab bar shows only the plan kinds that exist (Data / Data + Voice / Unlimited). One kind means no tab bar.
 - Any number of tiles works (three per row, always square). Countries and regions can have different plans.
-- The Unlimited notice shows on the Unlimited tab; the Local-plan notice shows on any tab with a `local` plan.
+- The capped-Unlimited notice shows while a capped Unlimited plan is selected; the green "Truly unlimited" notice shows for `noFup` plans; the Local-plan notice shows on any tab with a `local` plan.
 
 ### Hooks for checkout
 
@@ -123,6 +150,7 @@ Only import these plans from the eSIM Access API and skip everything else:
 All sample data is **placeholder**. Replace before launch:
 
 - [ ] **Plans**: sizes, prices, validity, Data + Voice minutes/SMS, Unlimited allowance and the 1 MB/s throttle wording.
+- [ ] **Scopes, `intl`, phone numbers, activation text, `noFup` flags**: all sample data in `data/pages/id.js` (the Asia country list, Singapore +65, France +33, Indonesia +62 and which plan has no daily cap are invented).
 - [ ] **Local-plan flags** (`local: true`) and the claim "Connects to local networks for faster speeds": confirm the wording.
 - [ ] **Networks** (country pages): carrier names per country. The examples use a neutral "Local partner networks" chip.
 - [ ] **Region country lists**: Europe's lists come from the coverage groups of the supplier plan file (EU-30 / EU-33 / EU-42); which retail plan uses which group is a guess.
