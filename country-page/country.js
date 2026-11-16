@@ -141,7 +141,8 @@ const openCountries = (function initGlobalModal() {
     const p = PLANS[kind][selected];
     out.plan.textContent = `${p.gb}${p.voice ? ` + ${p.voice}` : ''}${p.sms ? ` + ${p.sms}` : ''} · ${p.days} days`;
     out.price.textContent = usd(p.price);
-    document.getElementById('s-plan').textContent = out.plan.textContent;
+    document.getElementById('s-days').textContent = `${p.days} days`;
+    document.getElementById('s-gb').textContent = p.gb;
     document.getElementById('s-price').textContent = out.price.textContent;
     globalNote.hidden = !p.global;
     if (p.global) {
