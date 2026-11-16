@@ -143,6 +143,9 @@ const openCountries = (function initGlobalModal() {
     out.price.textContent = usd(p.price);
     document.getElementById('s-days').textContent = `${p.days} days`;
     document.getElementById('s-gb').textContent = p.gb;
+    const extra = document.getElementById('s-extra'); // voice: minutes + SMS; unlimited: daily allowance; data: none
+    extra.textContent = p.voice ? `${p.voice} + ${p.sms}` : (p.perDay || '');
+    extra.hidden = !extra.textContent;
     document.getElementById('s-price').textContent = out.price.textContent;
     globalNote.hidden = !p.global;
     if (p.global) {
