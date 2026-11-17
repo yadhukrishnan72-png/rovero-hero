@@ -1,25 +1,27 @@
 # Handoff
 
-**Last updated:** 2026-11-11
+**Last updated:** 2026-11-17
 
 ## Where we are
 Rovero eSIM pages, all static (no build step), deployed on Vercel project `rovero-hero` (public) and versioned in the private repo
-https://github.com/yadhukrishnan72-png/rovero-hero (`main`). Everything below was committed and pushed at the end of this session (`/handoff`).
+https://github.com/yadhukrishnan72-png/rovero-hero (`main`). Last session's work is committed, deployed and pushed (see `sessions/2026-11-17.md`); the only untracked files are `Current Live Plans.xlsx` and `Plan Audit.xlsx` (the owner's, not ours to commit).
 
 - **Live on https://rovero-hero.vercel.app:** hero page; Indonesia `country-page/country.html`; samples `country-page/japan.html` and `netherlands.html` (scene art);
   `region-page/europe.html` (+ `region.css`, `europe.js`, `images/eu.svg`). Not on the site (via `.vercelignore`): Africa `region-page/region.html`, `rovero-handoff/`, `tools/`, art previews, `*.xlsx`.
 - **Page design (all three page types):** square plan tiles (3 per row, always), tabs Data / Data + Voice / Unlimited, compact order summary, "Which traveller are you?", gold lightning badge for local plans (`local: true`),
-  Unlimited notice. Regions: each plan has its own country list; tile link "N countries ›" opens a sheet; plans flagged `more: true` hide behind a "More plans" link (100 MB).
+  Unlimited notice. **Indonesia page only (2026-11-17):** Data + Voice grouped into sections "Indonesia Only / + Asia / + Global" (`scope`), "Details" popup on voice tiles (`intl`, `number`), sticky pay bar, truly-unlimited `noFup` plans (green infinity badge; combinable with `local` for two badges), Local note follows the selected plan. Regions: each plan has its own country list; tile link "N countries ›" opens a sheet; plans flagged `more: true` hide behind a "More plans" link (100 MB).
 - **Destination art:** 246 static scene SVGs in `destination-art/scenes/` (203 countries + 43 region groups, named by code), generated from `destination-art/scene-plan.xlsx` by `tools/build_all_scenes.py`
   (`scene_data.py` = motifs per code, `scene_kit.py` = 125 motifs, `scene_backdrops.py` = 14 base scenes x 3 moods). Owner approved the look; weak scenes listed below.
-- **Developer handoff:** `rovero-handoff/` is also its own private repo https://github.com/yadhukrishnan72-png/rovero-handoff (3 commits; one data-driven `pages/destination.html` + data + 246 scenes + README/design tokens/generator).
+- **Developer handoff:** `rovero-handoff/` is also its own private repo https://github.com/yadhukrishnan72-png/rovero-handoff (4 commits; now also has the scope/Details/sticky-bar/noFup features, `3c51e4b`; one data-driven `pages/destination.html` + data + 246 scenes + README/design tokens/generator).
   The owner invites the developer (Settings > Collaborators, Read). To update it: change `rovero-handoff/` here, re-sync to a clone of that repo, ask before pushing.
 
-## What we did (this session)
-Redesigned the plan UI, added voice/unlimited/local plans, built region pages, produced all destination art, wrote the handoff package and repo, deployed the Japan/Netherlands/Europe samples,
+## What we did (last two sessions)
+2026-11-17: Indonesia page + handoff template got plan sections, Details popup, sticky pay bar and truly-unlimited/local badges (detail in `sessions/2026-11-17.md`).
+2026-11-11: Redesigned the plan UI, added voice/unlimited/local plans, built region pages, produced all destination art, wrote the handoff package and repo, deployed the Japan/Netherlands/Europe samples,
 and drafted developer messages (plan types, local icon, regional coverage, networks from API, eSIM Access plan list) plus the discount-code requirement and an affiliate reply. Detail in `sessions/2026-11-11.md`; reasons in `decisions.md`.
 
 ## What's next
+0. **Roll the 2026-11-17 features out to the other pages** if wanted: `country-page/japan.html`, `netherlands.html`, `region-page/europe.html` are old standalone copies without them; the template (`rovero-handoff`) already supports them via data. Developer message was sent in chat (not stored in files).
 1. **Owner decisions for the eSIMCompare discount code** (nothing built yet): discount %, which plans, day passes, returning customers, expiry, stacking. Then: send the developer message, reply to the affiliate
    (draft exists in the chat history, not in files), and optionally add the price display (crossed-out price, "code applied", read `?code=`) to the template and the handoff repo.
 2. **Replace placeholder data** (developer): plans/prices/voice bundles, networks (from the API: operator + 4G/5G), Africa's country list, nav/footer/related links; wire `rovero:pay` to checkout.
@@ -29,6 +31,8 @@ and drafted developer messages (plan types, local icon, regional coverage, netwo
 5. The Unsplash API application is pending; only needed if the owner later wants real photos.
 
 ## Open questions for the owner
+- Is "Truly unlimited. No daily limit and no speed reduction." accurate for the real no-FUP plans (any hidden fair-use cap)?
+- Real scopes data: Asia country list, which plans are Asia vs Global, included phone numbers, international minutes/SMS, activation policy text.
 - 1 GB validity (assumed 7 days) and the Unlimited throttle unit ("1 MB/s": 1 MB/s or 1 Mbps?).
 - Is the "Local plan ... faster speeds" claim accurate for every local plan?
 - Is the Vercel Git integration for `rovero-hero` connected (Settings > Git)? Unconfirmed.

@@ -45,3 +45,11 @@
 ## 2026-11-11: eSIM Access plan rules for the page data
 - Why (owner): import only 1 GB (7 days), 3 GB (15), 5/10/20/50 GB (30) and the "Unlimited 2 GB/day" plan; the 100 MB (7 days) plan sits under a "More plans" link (`more: true`); if two plans share GB, validity and price, keep the local one (roaming vs local). 1 GB validity was assumed to be 7 days.
 - Not picked: showing every supplier plan; showing 100 MB in the main grid.
+
+## 2026-11-17: Data + Voice plans are split by coverage (Only / + Asia / + Global), local first
+- Why (owner): customers confused local plans with regional/global ones. Names "Indonesia Only" / "Indonesia + Asia" / "Indonesia + Global" state coverage; section order is local, Asia, global. Existing badges kept (lightning = local, globe = regional/global); only voice tab changed.
+- Not picked: "Local" as the section name (the confusing word), "Inside / Beyond" names, a single mixed list.
+
+## 2026-11-17: Truly unlimited plans get their own green infinity badge and note; local note follows the selected plan
+- Why (owner): some Unlimited plans have no FUP. A plan can be both local and truly unlimited, so both badges show (side by side; bottom-left corner on phones to avoid covering text). The Local note follows the selected plan so it only appears when relevant.
+- Not picked: one combined capsule badge; stacking the badges vertically on phones (covered the tile text).
